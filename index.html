@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Radius Red Light Therapy — Waiting Room Loop</title>
+<link rel="stylesheet" href="colors_and_type.css" />
+<script src="deck-stage.js"></script>
+
+<script type="application/json" id="speaker-notes">
+[
+  "01 Title / Hook. Single line, full-bleed Dahlia. Designed to land at a glance: a member who looks up for two seconds gets the proposition (15 min, 5 modes, one bed). The 'Ask the front desk' chip is the only ask on this slide — keeps urgency low so the loop feels editorial, not infomercial. If you swap the bed photo, keep the right-side composition empty so the type still has room.",
+  "02 The Promise. Five-word stack riffing on the landing-page rotating headline ('liquified fat / faster recovery / less pain / better skin / stronger circulation'). Uses the brand's tall condensed display in red on black — same treatment as the eyebrow hero on the website. Each line is one of the five PTx outcomes, in order; if you reorder modes elsewhere, reorder these to match.",
+  "03 Meet the Pinnacle Bed. Hero product shot. Caption sits on the lower-left third with a thin red rule, lockup top-right. Specific numbers do the work: '15 minutes', '633/660/850/940 nm', 'full-body coverage'. If you change the bed photo, choose one with room on the right side for type to breathe.",
+  "04 How it works. Single-line equation diagram (Food + Oxygen + Red Light → Mitochondria → ATP → Energy). One sentence below it. The whole point of this slide is to make the science feel inevitable, not complicated. Edit the bottom sentence freely; do not add bullet points.",
+  "05 Protocol 01 — Weight Loss. Same template across slides 5–9: big numeral 01, Lucide icon, mode name in display caps, one-line blurb, wavelength stat. The visual variety comes from a single accent treatment per slide (red glow position rotates) — keep that subtle.",
+  "06 Protocol 02 — Recovery. Same template. Stat: 660 / 850 nm dual-wavelength.",
+  "07 Protocol 03 — Pain. Same template. Stat: 660 + 850 nm joint + muscular.",
+  "08 Protocol 04 — Skin. Same template. Stat: 630 nm surface absorption, collagen + tone.",
+  "09 Protocol 05 — Circulation. Same template. Stat: NO signaling, vascular + lymphatic.",
+  "10 The Super Stack. Sub-brand bridge. Lockup floats large on the right, copy on the left. The line 'Red light switches your cellular engines on. The Super Stack fuels them.' is a direct lift from the landing page voice — high-credibility, plain English. Custom-designed by Dr. Dan is the trust beat; do not weaken that.",
+  "11 Why this works with your adjustments. The conversion slide for existing patients. Two columns — Adjustments / Red Light — joined by a plus, with a single payoff line beneath. This is THE slide that closes existing chiropractic members, because it gives them a reason to add red light to a routine they're already in. If anything moves on this slide, only tighten copy.",
+  "12 Backed by science. Four large numerals on a dark grid: 200+ studies, 14 domains, 40+ years, 400–900 nm. Pulled directly from the Research section of the marketing site so claims are consistent. Numbers are in red; labels in muted mono caps.",
+  "13 The Intro Offer. The deck's stop sign. Largest type, most contrast, single price. $49 is the hero; $200 strikethrough is the anchor. Bullet list is intentionally short — consultation, 15-min session, mode of choice, vibration plate. Guarantee at the bottom in red. Do not add asterisks; the guarantee is the whole point. Urgency line ('Launch week ends Friday May 1') sits at the top right as a ticker, not a banner.",
+  "14 How to start. Final CTA. Splits 2/3 type and 1/3 QR code (replace src with the real Calendly QR). Loops back into slide 01 visually — same dark composition, lockup, eyebrow rule — so the transition reads intentional, not abrupt. Update QR_URL in the source to your live Calendly link before launch."
+]
+</script>
+
+<style>
+  /* ---------- Page chrome ---------- */
+  html, body { background: #000; margin: 0; }
+  body {
+    /* Hide deck-stage's default thin progress bar overlay; we keep keyboard nav */
+  }
+
+  /* ---------- Slide base ---------- */
+  .slide {
+    background: var(--black);
+    color: var(--fg-1);
+    overflow: hidden;
+    position: relative;
+    font-family: var(--font-sans);
+  }
+
+  .slide-pad {
+    position: absolute; inset: 0;
+    padding: 100px 120px 100px;
+    box-sizing: border-box;
+    display: flex; flex-direction: column;
+  }
+
+  /* ---------- Persistent chrome on every slide ---------- */
+  .chrome-top {
+    position: absolute; top: 56px; left: 120px; right: 120px;
+    display: flex; justify-content: space-between; align-items: center;
+    z-index: 5; pointer-events: none;
+  }
+  .chrome-bottom {
+    position: absolute; bottom: 56px; left: 120px; right: 120px;
+    display: flex; justify-content: space-between; align-items: flex-end;
+    z-index: 5; pointer-events: none;
+  }
+  .lockup {
+    height: 44px; width: auto; opacity: 0.95;
+    filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
+  }
+  .ticker {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--fg-3);
+    display: flex; align-items: center; gap: 14px;
+  }
+  .ticker .pulse {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 12px var(--accent);
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity: 1; }
+    50% { opacity: 0.45; }
+  }
+  .ticker.urgent { color: var(--fg-1); }
+  .ticker.urgent .pulse { background: var(--accent); }
+
+  /* ---------- Eyebrow rule ---------- */
+  .eyebrow-rule {
+    display: inline-flex; align-items: center; gap: 18px;
+    font-family: var(--font-sans);
+    font-size: 16px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .eyebrow-rule::before {
+    content: ""; width: 56px; height: 1px; background: var(--accent);
+  }
+
+  /* ---------- Display type ---------- */
+  .display {
+    font-family: var(--font-display);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: -0.025em;
+    line-height: 0.96;
+    margin: 0;
+    color: var(--fg-1);
+  }
+  .h-mega   { font-size: 220px; }
+  .h-jumbo  { font-size: 168px; }
+  .h-hero   { font-size: 132px; }
+  .h-1      { font-size: 96px; }
+  .h-2      { font-size: 72px; }
+  .h-3      { font-size: 56px; }
+
+  .lede {
+    font-family: var(--font-sans);
+    font-size: 36px;
+    line-height: 1.35;
+    color: var(--fg-2);
+    max-width: 22ch;
+    margin: 0;
+  }
+  .body-lg {
+    font-family: var(--font-sans);
+    font-size: 32px;
+    line-height: 1.4;
+    color: var(--fg-2);
+    margin: 0;
+  }
+  .meta {
+    font-family: var(--font-mono);
+    font-size: 18px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--fg-3);
+  }
+  .red { color: var(--accent); }
+
+  /* ---------- Slide 1: Title ---------- */
+  .s-title-bg {
+    position: absolute; inset: 0;
+    background: url('assets/pinnacle-bed-side-view.jpg') center/cover no-repeat;
+    transform: scale(1.05);
+  }
+  .s-title-veil {
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(110deg, rgba(10,10,11,0.85) 0%, rgba(10,10,11,0.35) 50%, rgba(10,10,11,0.92) 100%),
+      linear-gradient(180deg, rgba(10,10,11,0.55) 0%, rgba(10,10,11,0) 35%, rgba(10,10,11,0.92) 100%);
+  }
+  .s-title-content {
+    position: relative; z-index: 2;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    height: 100%;
+  }
+  .s-title-headline {
+    font-size: 156px;
+    max-width: 22ch;
+  }
+  .s-title-cta {
+    margin-top: 56px;
+    display: inline-flex; align-items: center; gap: 18px;
+    font-family: var(--font-mono);
+    font-size: 20px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--fg-1);
+    padding: 18px 28px;
+    border: 1px solid var(--accent);
+    background: rgba(230,0,35,0.08);
+    backdrop-filter: blur(6px);
+    width: fit-content;
+  }
+  .s-title-cta .arrow {
+    width: 28px; height: 1px; background: var(--accent); position: relative;
+  }
+  .s-title-cta .arrow::after {
+    content: ""; position: absolute; right: 0; top: -3px;
+    width: 8px; height: 8px;
+    border-right: 1px solid var(--accent);
+    border-top: 1px solid var(--accent);
+    transform: rotate(45deg);
+  }
+
+  /* ---------- Slide 2: Promise stack ---------- */
+  .s-promise {
+    align-items: flex-start; justify-content: center;
+  }
+  .promise-stack {
+    display: flex; flex-direction: column;
+    gap: 8px; margin-top: 0;
+  }
+  .promise-line {
+    display: flex; align-items: baseline; gap: 36px;
+    font-family: var(--font-display);
+    font-size: 108px; font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: -0.03em;
+    line-height: 1.3;
+    white-space: nowrap;
+    padding-bottom: 4px;
+  }
+  .promise-line .num {
+    font-family: var(--font-mono);
+    font-size: 22px;
+    color: var(--accent);
+    letter-spacing: 0.22em;
+    font-weight: 600;
+    min-width: 56px;
+  }
+  .promise-line .word { color: var(--fg-1); }
+  .promise-line .word .accent { color: var(--accent); }
+
+  /* ---------- Slide 3: Meet the Bed ---------- */
+  .s-bed-bg {
+    position: absolute; inset: 0;
+    background: url('assets/pinnacle-bed-with-model.jpg') center/cover no-repeat;
+  }
+  .s-bed-veil {
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(90deg, rgba(10,10,11,0.92) 0%, rgba(10,10,11,0.4) 45%, rgba(10,10,11,0) 100%),
+      linear-gradient(180deg, rgba(10,10,11,0) 50%, rgba(10,10,11,0.7) 100%);
+  }
+  .s-bed-content {
+    position: relative; z-index: 2;
+    display: grid; grid-template-rows: 1fr auto;
+    height: 100%;
+  }
+  .s-bed-headline {
+    font-size: 132px;
+    max-width: 12ch;
+    align-self: center;
+  }
+  .s-bed-stats {
+    display: grid; grid-template-columns: repeat(3, auto);
+    gap: 64px;
+    border-top: 1px solid var(--ink-600);
+    padding-top: 36px;
+  }
+  .stat-item .stat-num {
+    font-family: var(--font-display);
+    font-size: 72px; font-weight: 700;
+    color: var(--fg-1);
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .stat-item .stat-num .unit {
+    font-size: 32px; color: var(--fg-3); font-weight: 400;
+    margin-left: 6px;
+  }
+  .stat-item .stat-label {
+    font-family: var(--font-mono);
+    font-size: 16px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--fg-3);
+    margin-top: 14px;
+  }
+
+  /* ---------- Slide 4: Science diagram ---------- */
+  .s-science .lede { max-width: 32ch; font-size: 32px; }
+  .equation {
+    display: flex; align-items: center; gap: 28px;
+    flex-wrap: nowrap;
+    margin: 80px 0 56px;
+  }
+  .eq-input-group {
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .eq-input {
+    font-family: var(--font-mono);
+    font-size: 22px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--fg-2);
+    padding: 14px 22px;
+    border: 1px solid var(--ink-600);
+    background: var(--ink-900);
+    white-space: nowrap;
+  }
+  .eq-input.highlight {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: rgba(230,0,35,0.08);
+    box-shadow: var(--glow-red-sm);
+  }
+  .eq-arrow {
+    width: 60px; height: 1px; background: var(--ink-500); position: relative;
+    flex-shrink: 0;
+  }
+  .eq-arrow::after {
+    content: ""; position: absolute; right: 0; top: -5px;
+    width: 12px; height: 12px;
+    border-right: 1px solid var(--ink-500);
+    border-top: 1px solid var(--ink-500);
+    transform: rotate(45deg);
+  }
+  .eq-node {
+    font-family: var(--font-display);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    padding: 28px 32px;
+    border: 1px solid var(--accent);
+    background: rgba(230,0,35,0.06);
+    color: var(--fg-1);
+    font-size: 40px;
+    white-space: nowrap;
+    box-shadow: 0 0 32px -8px rgba(230,0,35,0.5) inset;
+  }
+  .eq-node.atp {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: var(--white);
+  }
+  .eq-final {
+    font-family: var(--font-display);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    color: var(--fg-1);
+    font-size: 56px;
+    white-space: nowrap;
+  }
+
+  /* ---------- Slide 5–9: Protocol template ---------- */
+  .s-proto {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+    justify-content: stretch;
+  }
+  .proto-left {
+    display: flex; flex-direction: column; justify-content: center;
+    gap: 28px;
+  }
+  .proto-num {
+    font-family: var(--font-display);
+    font-size: 360px;
+    font-weight: 700;
+    line-height: 0.85;
+    letter-spacing: -0.04em;
+    color: var(--accent);
+    margin: 0;
+    text-shadow: 0 0 80px rgba(230,0,35,0.3);
+  }
+  .proto-name {
+    font-size: 132px;
+    color: var(--fg-1);
+  }
+  .proto-blurb {
+    font-size: 32px;
+    line-height: 1.4;
+    color: var(--fg-2);
+    max-width: 24ch;
+    margin: 0;
+  }
+  .proto-right {
+    height: 100%;
+    display: flex; flex-direction: column; justify-content: center; gap: 36px;
+  }
+  .proto-spec {
+    border: 1px solid var(--ink-600);
+    background: var(--ink-900);
+    padding: 36px 40px;
+  }
+  .proto-spec-label {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--fg-3);
+    margin-bottom: 14px;
+  }
+  .proto-spec-value {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 64px;
+    color: var(--fg-1);
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .proto-spec-value .unit {
+    font-size: 28px; color: var(--fg-3); font-weight: 400;
+    margin-left: 8px;
+  }
+  .proto-icon {
+    width: 80px; height: 80px;
+    stroke: var(--accent);
+    stroke-width: 1.5;
+    fill: none;
+  }
+  .proto-tag-row {
+    display: flex; gap: 14px; flex-wrap: wrap;
+  }
+  .proto-tag {
+    font-family: var(--font-mono);
+    font-size: 16px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--fg-3);
+    padding: 10px 16px;
+    border: 1px solid var(--ink-600);
+  }
+  .proto-tag.hot {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  /* Wavelength visualizer */
+  .wave-stack {
+    display: flex; flex-direction: column; gap: 20px;
+  }
+  .wave-row {
+    display: grid; grid-template-columns: 120px 1fr 80px;
+    gap: 20px; align-items: center;
+  }
+  .wave-row .wl-label {
+    font-family: var(--font-mono); font-size: 18px;
+    letter-spacing: 0.22em; color: var(--fg-1); font-weight: 600;
+  }
+  .wave-row .wl-bar {
+    height: 16px;
+    background: linear-gradient(90deg, transparent 0%, var(--accent) 100%);
+    position: relative;
+  }
+  .wave-row .wl-bar.dim {
+    background: linear-gradient(90deg, transparent 0%, var(--ink-700) 100%);
+  }
+  .wave-row .wl-suffix {
+    font-family: var(--font-mono); font-size: 14px;
+    letter-spacing: 0.18em; color: var(--fg-3);
+    text-transform: uppercase;
+  }
+
+  /* ---------- Slide 10: Super Stack ---------- */
+  .s-stack {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 80px;
+    align-items: center;
+  }
+  .s-stack .h-1 { max-width: 12ch; }
+  .stack-logo-wrap {
+    display: flex; align-items: center; justify-content: center;
+    height: 100%; position: relative;
+  }
+  .stack-logo-wrap::before {
+    content: "";
+    position: absolute; inset: -100px;
+    background: radial-gradient(circle at center, rgba(230,0,35,0.15) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .stack-logo {
+    max-height: 600px; max-width: 100%; width: auto; height: auto;
+    position: relative;
+    filter: drop-shadow(0 0 40px rgba(230,0,35,0.3));
+  }
+  .stack-attribution {
+    margin-top: 32px;
+    display: flex; align-items: center; gap: 14px;
+    font-family: var(--font-mono);
+    font-size: 16px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--fg-3);
+  }
+  .stack-attribution .red { color: var(--accent); }
+
+  /* ---------- Slide 11: Why this works ---------- */
+  .s-bridge {
+    display: grid; grid-template-rows: auto 1fr auto;
+    gap: 0;
+  }
+  .bridge-headline { font-size: 96px; max-width: 20ch; }
+  .bridge-cols {
+    display: grid; grid-template-columns: 1fr 80px 1fr;
+    gap: 0; align-items: stretch;
+    margin: 64px 0;
+  }
+  .bridge-col {
+    border: 1px solid var(--ink-600);
+    background: var(--ink-900);
+    padding: 56px 48px;
+    display: flex; flex-direction: column; gap: 28px;
+  }
+  .bridge-col.right {
+    border-color: var(--accent);
+    background: rgba(230,0,35,0.05);
+    box-shadow: var(--glow-red-sm);
+  }
+  .bridge-col-label {
+    font-family: var(--font-mono);
+    font-size: 18px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--fg-3);
+  }
+  .bridge-col.right .bridge-col-label { color: var(--accent); }
+  .bridge-col-title {
+    font-family: var(--font-display);
+    font-size: 56px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    color: var(--fg-1);
+    line-height: 1;
+  }
+  .bridge-col-body {
+    font-size: 24px;
+    line-height: 1.45;
+    color: var(--fg-2);
+  }
+  .bridge-plus {
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display);
+    font-size: 96px; font-weight: 300;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .bridge-payoff {
+    font-family: var(--font-display);
+    font-size: 64px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    color: var(--fg-1);
+    line-height: 1.05;
+    text-align: left;
+  }
+  .bridge-payoff .red { color: var(--accent); }
+
+  /* ---------- Slide 12: Backed by science ---------- */
+  .s-science-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--ink-600);
+    border: 1px solid var(--ink-600);
+    margin-top: 48px;
+  }
+  .sci-cell {
+    background: var(--black);
+    padding: 64px 48px 56px;
+    display: flex; flex-direction: column; gap: 14px;
+    min-height: 380px;
+    justify-content: space-between;
+  }
+  .sci-num {
+    font-family: var(--font-display);
+    font-size: 168px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: -0.04em;
+    line-height: 0.85;
+  }
+  .sci-num .small { font-size: 88px; }
+  .sci-label {
+    font-family: var(--font-mono);
+    font-size: 18px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--fg-1);
+    line-height: 1.3;
+  }
+
+  /* ---------- Slide 13: Intro Offer ---------- */
+  .s-offer {
+    display: grid; grid-template-columns: 1.2fr 1fr; gap: 96px;
+    align-items: center;
+  }
+  .offer-eyebrow {
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 18px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 32px;
+  }
+  .offer-headline {
+    font-size: 108px;
+    line-height: 0.95;
+    margin-bottom: 28px;
+  }
+  .offer-price {
+    display: flex; align-items: baseline; gap: 36px;
+    margin-bottom: 24px;
+  }
+  .price-now {
+    font-family: var(--font-display);
+    font-size: 220px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: -0.04em;
+    line-height: 0.85;
+    text-shadow: 0 0 60px rgba(230,0,35,0.4);
+  }
+  .price-was {
+    font-family: var(--font-display);
+    font-size: 72px;
+    font-weight: 400;
+    color: var(--fg-3);
+    letter-spacing: -0.02em;
+    text-decoration: line-through;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 3px;
+  }
+  .offer-includes {
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .offer-includes-label {
+    font-family: var(--font-mono);
+    font-size: 16px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--fg-3);
+    margin-bottom: 8px;
+  }
+  .offer-include-row {
+    display: grid; grid-template-columns: 32px 1fr; gap: 18px;
+    align-items: baseline;
+    font-size: 24px;
+    color: var(--fg-1);
+    font-weight: 400;
+    line-height: 1.25;
+  }
+  .offer-include-row .check {
+    width: 20px; height: 20px;
+    border: 1px solid var(--accent);
+    position: relative;
+    top: 4px;
+  }
+  .offer-include-row .check::after {
+    content: ""; position: absolute;
+    left: 4px; top: 0px;
+    width: 6px; height: 12px;
+    border-right: 2px solid var(--accent);
+    border-bottom: 2px solid var(--accent);
+    transform: rotate(45deg);
+  }
+  .offer-guarantee {
+    margin-top: 56px;
+    padding: 28px 32px;
+    border: 1px solid var(--accent);
+    background: rgba(230,0,35,0.08);
+    font-family: var(--font-display);
+    font-size: 36px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    color: var(--fg-1);
+    line-height: 1.15;
+  }
+  .offer-guarantee .label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    letter-spacing: 0.24em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+  .offer-guarantee .red { color: var(--accent); }
+
+  /* ---------- Slide 14: CTA ---------- */
+  .s-cta {
+    display: grid; grid-template-columns: 1.4fr 1fr; gap: 96px;
+    align-items: center;
+  }
+  .cta-headline {
+    font-size: 156px;
+    max-width: 12ch;
+    margin-bottom: 40px;
+  }
+  .cta-sub {
+    font-size: 32px;
+    color: var(--fg-2);
+    max-width: 26ch;
+    line-height: 1.35;
+    margin-bottom: 56px;
+  }
+  .cta-deadline {
+    display: inline-flex; align-items: center; gap: 18px;
+    font-family: var(--font-mono);
+    font-size: 20px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    padding: 16px 24px;
+    border: 1px solid var(--accent);
+    background: rgba(230,0,35,0.06);
+  }
+  .qr-frame {
+    background: var(--white);
+    padding: 32px;
+    width: 100%; max-width: 480px;
+    aspect-ratio: 1 / 1;
+    display: grid; place-items: center;
+    margin-left: auto;
+    box-shadow: 0 0 80px -8px rgba(230,0,35,0.4);
+  }
+  .qr-frame img, .qr-frame svg { width: 100%; height: 100%; display: block; }
+  .qr-caption {
+    margin-top: 24px;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 16px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--fg-3);
+  }
+  .qr-caption .red { color: var(--accent); }
+
+  /* ---------- Sub-numbers / running labels ---------- */
+  .slide-counter {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    letter-spacing: 0.22em;
+    color: var(--fg-3);
+    text-transform: uppercase;
+  }
+
+  /* Hide deck-stage default counter — we render our own */
+  deck-stage::part(counter) { display: none; }
+
+</style>
+</head>
+<body>
+
+<deck-stage width="1920" height="1080">
+
+  <!-- ========================================================
+       01 — TITLE / HOOK
+       ======================================================== -->
+  <section class="slide" data-label="01 Title">
+    <div class="s-title-bg"></div>
+    <div class="s-title-veil"></div>
+
+    <div class="chrome-top">
+      <img class="lockup" src="assets/logo-lockup.png" alt="Radius Red Light Therapy" />
+      <div class="ticker"><span class="pulse"></span><span>Now open · Asheville</span></div>
+    </div>
+
+    <div class="slide-pad s-title-content">
+      <div class="eyebrow-rule" style="margin-bottom: 36px;">Launching this week</div>
+      <h1 class="display s-title-headline">
+        15 minutes.<br/>
+        5 modes.<br/>
+        <span style="color: var(--accent)">One bed</span> engineered to change<br/>how you heal.
+      </h1>
+      <div class="s-title-cta">
+        <span>Ask the front desk</span>
+        <span class="arrow"></span>
+      </div>
+    </div>
+
+    <div class="chrome-bottom">
+      <div class="meta">Radius Chiropractic · 1011 Tunnel Rd · Asheville, NC</div>
+      <div class="meta slide-counter">01 / 14</div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       02 — THE PROMISE
+       ======================================================== -->
+  <section class="slide" data-label="02 Promise">
+    <div class="chrome-top">
+      <img class="lockup" src="assets/logo-lockup.png" alt="Radius" />
+      <div class="ticker"><span>The Radius Effect</span></div>
+    </div>
+
+    <div class="slide-pad s-promise" style="justify-content: center;">
+      <div class="eyebrow-rule" style="margin-bottom: 56px;">In 15 minutes you generate</div>
+      <div class="promise-stack">
+        <div class="promise-line"><span class="num">01</span><span class="word">Real <span class="accent">energy.</span></span></div>
+        <div class="promise-line"><span class="num">02</span><span class="word">Liquified <span class="accent">fat.</span></span></div>
+        <div class="promise-line"><span class="num">03</span><span class="word">Faster <span class="accent">recovery.</span></span></div>
+        <div class="promise-line"><span class="num">04</span><span class="word">Less <span class="accent">pain.</span></span></div>
+        <div class="promise-line"><span class="num">05</span><span class="word">Better <span class="accent">skin.</span></span></div>
+      </div>
+    </div>
+
+    <div class="chrome-bottom">
+      <div class="meta">Stronger circulation. Cellular optimization.</div>
+      <div class="meta slide-counter">02 / 14</div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       03 — MEET THE PINNACLE BED
+       ======================================================== -->
+  <section class="slide" data-label="03 The Bed">
+    <div class="s-bed-bg"></div>
+    <div class="s-bed-veil"></div>
+
+    <div class="chrome-top">
+      <img class="lockup" src="assets/logo-lockup.png" alt="Radius" />
+      <div class="ticker"><span>Dahlia Pinnacle · PTx-5</span></div>
+    </div>
+
+    <div class="slide-pad s-bed-content">
+      <div>
+        <div class="eyebrow-rule" style="margin-bottom: 36px;">Now in studio · 03</div>
+        <h2 class="display s-bed-headline">Meet the<br/>Pinnacle Bed.</h2>
+      </div>
+      <div class="s-bed-stats">
+        <div class="stat-item">
+          <div class="stat-num">15<span class="unit">min</span></div>
+          <div class="stat-label">Per session</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">5<span class="unit">modes</span></div>
+          <div class="stat-label">PTx protocols</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num" style="color: var(--accent);">630/660<br/>850/940<span class="unit"> nm</span></div>
+          <div class="stat-label">Medical-grade wavelengths</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chrome-bottom">
+      <div class="meta">Full-body coverage · contactless</div>
+      <div class="meta slide-counter">03 / 14</div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       04 — HOW IT WORKS (THE SCIENCE, SIMPLIFIED)
+       ======================================================== -->
+  <section class="slide" data-label="04 How It Works">
+    <div class="chrome-top">
+      <img class="lockup" src="assets/logo-lockup.png" alt="Radius" />
+      <div class="ticker"><span>The Science · Simplified</span></div>
+    </div>
+
+    <div class="slide-pad s-science">
+      <div class="eyebrow-rule" style="margin-bottom: 36px;">04 / How it works</div>
+      <h2 class="display h-1" style="margin-bottom: 32px; max-width: 20ch;">Your mitochondria<br/>made <span class="red">measurably</span> better.</h2>
+
+      <div class="equation">
+        <div class="eq-input-group">
+          <div class="eq-input">Food</div>
+          <div class="eq-input">Oxygen</div>
+          <div class="eq-input highlight">Red light · 633–940 nm</div>
+        </div>
+        <div class="eq-arrow"></div>
+        <div class="eq-node">Mitochondria</div>
+        <div class="eq-arrow"></div>
+        <div class="eq-node atp">ATP</div>
+        <div class="eq-arrow"></div>
+        <div class="eq-final">Cellular energy</div>
+      </div>
+
+      <p class="lede" style="max-width: 38ch;">
+        Your mitochondria turn food and oxygen into energy.<br/>
+        Red light makes them do it <span class="red" style="font-weight: 600;">better</span>.
+      </p>
+    </div>
+
+    <div class="chrome-bottom">
+      <div class="meta">Photobiomodulation · cytochrome c oxidase</div>
+      <div class="meta slide-counter">04 / 14</div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       05–09 — THE FIVE PROTOCOLS
+       ======================================================== -->
+
+  <!-- Lucide icon SVG markup inlined for the 5 protocols (stroke-only, brand red) -->
+  <!-- We render each protocol slide explicitly to keep parallelism rigorous -->
+
+  <!-- 05 Weight Loss -->
+  <section class="slide" data-label="05 Weight Loss">
+    <div class="chrome-top">
+      <img class="lockup" src="assets/logo-lockup.png" alt="Radius" />
+      <div class="ticker"><span>Protocol 01 / 05</span></div>
+    </div>
+
+    <div class="slide-pad s-proto">
+      <div class="proto-left">
+        <div class="eyebrow-rule" style="margin-bottom: 14px;">PTx Mode · 01</div>
+        <div class="proto-num">01</div>
+        <h2 class="display proto-name">Weight<br/>loss.</h2>
+        <p class="proto-blurb">Activates fat mobilization. Targets adipose tissue, cumulative across sessions.</p>
+      </div>
+
+      <div class="proto-right">
+        <svg class="proto-icon" viewBox="0 0 24 24"><!-- flame -->
+          <path d="M8.5 14.5A2.5 2.5 0 0 0 11 17c1.5 0 2-1 2-2 0-1.5-1.5-2-1.5-3.5C11.5 10 13 9 14 9c0 2 .5 3 1 3.5C16 13 17 14 17 16a5 5 0 0 1-10 0c0-2 1-3 1-5C8 9 9 8 9 6c1 0 1.5 1 2 1.5.5.5.5 1.5 0 2.5-.5 1-1 1.5-1 2.5 0 1.5-.5 2-1.5 2z" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div class="proto-spec">
+          <div class="proto-spec-label">Wavelength · primary</div>
+          <div class="proto-spec-value">633<span class="unit">nm</span></div>
+        </div>
+        <div class="wave-stack">
+          <div class="wave-row"><span class="wl-label">633</span><span class="wl-bar"></span><span class="wl-suffix">Active</span></div>
+          <div class="wave-row"><span class="wl-label">660</span><span class="wl-bar dim"></span><span class="wl-suffix">—</span></div>
+          <div class="wave-row"><span class="wl-label">850</span><span class="wl-bar dim"></span><span class="wl-suffix">—</span></div>
+          <div class="wave-row"><span class="wl-label">940</span><span class="wl-bar dim"></span><span class="wl-suffix">—</span></div>
+        </div>
+        <div class="proto-tag-row">
+          <div class="proto-tag hot">Adipose targeted</div>
+          <div class="proto-tag">15 min full body</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chrome-bottom">
+      <div class="meta">Pinnacle Bed · Mode 01 · Weight Loss</div>
+      <div class="meta slide-counter">05 / 14</div>
+    </div>
+  </section>
+
+  <!-- 06 Recovery -->
+  <section class="slide" data-label="06 Recovery">
+    <div class="chrome-top">
+      <img class="lockup" src="assets/logo-lockup.png" alt="Radius" />
+      <div class="ticker"><span>Protocol 02 / 05</span></div>
+    </div>
+
+    <div class="slide-pad s-proto">
+      <div class="proto-left">
+        <div class="eyebrow-rule" style="margin-bottom: 14px;">PTx Mode · 02</div>
+        <div class="proto-num">02</div>
+        <h2 class="display proto-name">Recovery.</h2>
+        <p class="proto-blurb">Flushes lactate. Shortens recovery windows post-training. ATP restored faster.</p>
+      </div>
+
+      <div class="proto-right">
+        <svg class="proto-icon" viewBox="0 0 24 24"><!-- bolt -->
+          <path d="M13 3 4 14h7l-1 7 9-11h-7z" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div class="proto-spec">
+          <div class="proto-spec-label">Wavelength · dual</div>
+          <div class="proto-spec-value">660<span style="color: var(--fg-3); font-weight: 400;">/</span>850<span class="unit">nm</span></div>
+        </div>
+        <div class="wave-stack">
+          <div class="wave-row"><span class="wl-label">633</span><span class="wl-bar dim"></span><span class="wl-suffix">—</span></div>
+          <div class="wave-row"><span class="wl-label">660</span><span class="wl-bar"></span><span class="wl-suffix">Active</span></div>
+          <div class="wave-row"><span class="wl-label">850</span><span class="wl-bar"></span><span class="wl-suffix">Active</span></div>
+          <div class="wave-row"><span class="wl-label">940</span><span class="wl-bar dim"></span><span class="wl-suffix">—</span></div>
+        </div>
+        <div class="proto-tag-row">
+          <div class="proto-tag hot">Lactate flush</div>
+          <div class="proto-tag">Post-training</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chrome-bottom">
+      <div class="meta">Pinnacle Bed · Mode 02 · Recovery</div>
+      <div class="meta slide-counter">06 / 14</div>
+    </div>
+  </section>
+
+  <!-- 07 Pain -->
+  <section class="slide" data-label="07 Pain">
+    <div class="chrome-top">
+      <img class="lockup" src="assets/logo-lockup.png" alt="Radius" />
+      <div class="ticker"><span>Protocol 03 / 05</span></div>
+    </div>
+
+    <div class="slide-pad s-proto">
+      <div class="proto-left">
+        <div class="eyebrow-rule" style="margin-bottom: 14px;">PTx Mode · 03</div>
+        <div class="proto-num">03</div>
+        <h2 class="display proto-name">Pain.</h2>
+        <p class="proto-blurb">Joint and muscular inflammation, calmed at the source. Dual penetration depth.</p>
+      </div>
+
+      <div class="proto-right">
+        <svg class="proto-icon" viewBox="0 0 24 24"><!-- bone -->
+          <path d="M17 10c1.66 0 3-1.34 3-3 0-2-2-3-2-3s.5 1.5-1 1.5S15.5 4 15.5 4 13 4.5 13 7c0 .9.4 1.7 1 2.3l-3.7 3.7c-.6-.6-1.4-1-2.3-1-2.5 0-3 2.5-3 2.5s1.5-.5 1.5 1S5.5 17.5 5.5 17.5s1 2 3 2c1.66 0 3-1.34 3-3l-.3-.3 3.6-3.6.3.3c0 1.66 1.34 3 3 3 2 0 3-2 3-2s-1.5.5-1.5-1S17 10 17 10z" stroke-linejoin="round"/>
+        </svg>
+        <div class="proto-spec">
+          <div class="proto-spec-label">Wavelength · dual</div>
+          <div class="proto-spec-value">660<span style="color: var(--fg-3); font-weight: 400;">/</span>850<span class="unit">nm</span></div>
+        </div>
+        <div class="wave-stack">
+          <div class="wave-row"><span class="wl-label">633</span><span class="wl-bar dim"></span><span class="wl-suffix">—</span></div>
+          <div class="wave-row"><span class="wl-label">660</span><span class="wl-bar"></span><span class="wl-suffix">Active</span></div>
+          <div class="wave-row"><span class="wl-label">850</span><span class="wl-bar"></span><span class="wl-suffix">Active</span></div>
+          <div class="wave-row"><span class="wl-label">940</span><span class="wl-bar dim"></span><span class="wl-suffix">—</span></div>
+        </div>
+        <div class="proto-tag-row">
+          <div class="proto-tag hot">Joint + muscular</div>
+          <div class="proto-tag">Anti-inflammatory</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chrome-bottom">
+      <div class="meta">Pinnacle Bed · Mode 03 · Pain</div>
+      <div class="meta slide-counter">07 / 14</div>
+    </div>
+  </section>
+
+  <!-- 08 Skin -->
+  <section class="slide" data-label="08 Skin">
+    <div class="chrome-top">
+      <img class="lockup" src="assets/logo-lockup.png" alt="Radius" />
+      <div class="ticker"><span>Protocol 04 / 05</span></div>
+    </div>
+
+    <div class="slide-pad s-proto">
+      <div class="proto-left">
+        <div class="eyebrow-rule" style="margin-bottom: 14px;">PTx Mode · 04</div>
+        <div class="proto-num">04</div>
+        <h2 class="display proto-name">Skin.</h2>
+        <p class="proto-blurb">Collagen, tone, scarring. Surface absorption that rebuilds dermis from the inside.</p>
+      </div>
+
+      <div class="proto-right">
+        <svg class="proto-icon" viewBox="0 0 24 24"><!-- sparkle -->
+          <path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1" stroke-linecap="round"/>
+          <circle cx="12" cy="12" r="3"/>
+        </svg>
+        <div class="proto-spec">
+          <div class="proto-spec-label">Wavelength · primary</div>
+          <div class="proto-spec-value">630<span class="unit">nm</span></div>
+        </div>
+        <div class="wave-stack">
+          <div class="wave-row"><span class="wl-label">633</span><span class="wl-bar"></span><span class="wl-suffix">Active</span></div>
+          <div class="wave-row"><span class="wl-label">660</span><span class="wl-bar dim"></span><span class="wl-suffix">—</span></div>
+          <div class="wave-row"><span class="wl-label">850</span><span class="wl-bar dim"></span><span class="wl-suffix">—</span></div>
+          <div class="wave-row"><span class="wl-label">940</span><span class="wl-bar dim"></span><span class="wl-suffix">—</span></div>
+        </div>
+        <div class="proto-tag-row">
+          <div class="proto-tag hot">Collagen synthesis</div>
+          <div class="proto-tag">Surface absorption</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chrome-bottom">
+      <div class="meta">Pinnacle Bed · Mode 04 · Skin</div>
+      <div class="meta slide-counter">08 / 14</div>
+    </div>
+  </section>
+
+  <!-- 09 Circulation -->
+  <section class="slide" data-label="09 Circulation">
+    <div class="chrome-top">
+      <img class="lockup" src="assets/logo-lockup.png" alt="Radius" />
+      <div class="ticker"><span>Protocol 05 / 05</span></div>
+    </div>
+
+    <div class="slide-pad s-proto">
+      <div class="proto-left">
+        <div class="eyebrow-rule" style="margin-bottom: 14px;">PTx Mode · 05</div>
+        <div class="proto-num">05</div>
+        <h2 class="display proto-name">Circul-<br/>ation.</h2>
+        <p class="proto-blurb">Vascular and lymphatic flow. Nitric oxide signaling. Oxygen delivery to every cell.</p>
+      </div>
+
+      <div class="proto-right">
+        <svg class="proto-icon" viewBox="0 0 24 24"><!-- heart-pulse -->
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z" stroke-linejoin="round"/>
+          <path d="M3.5 12h4l2-3 2 6 2-4h7" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div class="proto-spec">
+          <div class="proto-spec-label">Wavelength · deep · NIR</div>
+          <div class="proto-spec-value">850<span style="color: var(--fg-3); font-weight: 400;">/</span>940<span class="unit">nm</span></div>
+        </div>
+        <div class="wave-stack">
+          <div class="wave-row"><span class="wl-label">633</span><span class="wl-bar dim"></span><span class="wl-suffix">—</span></div>
+          <div class="wave-row"><span class="wl-label">660</span><span class="wl-bar dim"></span><span class="wl-suffix">—</span></div>
+          <div class="wave-row"><span class="wl-label">850</span><span class="wl-bar"></span><span class="wl-suffix">Active</span></div>
+          <div class="wave-row"><span class="wl-label">940</span><span class="wl-bar"></span><span class="wl-suffix">Active</span></div>
+        </div>
+        <div class="proto-tag-row">
+          <div class="proto-tag hot">NO signaling</div>
+          <div class="proto-tag">Vascular + lymphatic</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chrome-bottom">
+      <div class="meta">Pinnacle Bed · Mode 05 · Circulation</div>
+      <div class="meta slide-counter">09 / 14</div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       10 — THE RADIUS SUPER STACK
+       ======================================================== -->
+  <section class="slide" data-label="10 Super Stack">
+    <div class="chrome-top">
+      <img class="lockup" src="assets/logo-lockup.png" alt="Radius" />
+      <div class="ticker"><span>The Super Stack · Sub-brand</span></div>
+    </div>
+
+    <div class="slide-pad s-stack">
+      <div>
+        <div class="eyebrow-rule" style="margin-bottom: 36px;">10 / Amplifier</div>
+        <h2 class="display h-1" style="margin-bottom: 32px; max-width: 14ch;">
+          Red light <span class="red">switches</span> your cellular engines on.
+        </h2>
+        <p class="body-lg" style="max-width: 28ch; margin-bottom: 20px;">
+          The Super Stack <span class="red" style="font-weight: 600;">fuels</span> them.
+        </p>
+        <p class="body-lg" style="max-width: 32ch; color: var(--fg-3); font-size: 24px;">
+          A proprietary mitochondrial supplement, custom-designed by Dr. Dan Martin to amplify every Pinnacle session.
+        </p>
+        <div class="stack-attribution">
+          <span class="red">●</span>
+          <span>Designed in-house · Asheville</span>
+        </div>
+      </div>
+
+      <div class="stack-logo-wrap">
+        <img class="stack-logo" src="assets/logo-radius-super-stack.png" alt="Radius Super Stack" />
+      </div>
+    </div>
+
+    <div class="chrome-bottom">
+      <div class="meta">Bundled with every program purchase</div>
+      <div class="meta slide-counter">10 / 14</div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       11 — WHY THIS WORKS WITH YOUR ADJUSTMENTS
+       ======================================================== -->
+  <section class="slide" data-label="11 With Adjustments">
+    <div class="chrome-top">
+      <img class="lockup" src="assets/logo-lockup.png" alt="Radius" />
+      <div class="ticker"><span>For Radius members</span></div>
+    </div>
+
+    <div class="slide-pad s-bridge">
+      <div>
+        <div class="eyebrow-rule" style="margin-bottom: 28px;">11 / The compounding effect</div>
+        <h2 class="display bridge-headline">
+          You're already doing the hardest part.
+        </h2>
+      </div>
+
+      <div class="bridge-cols">
+        <div class="bridge-col">
+          <div class="bridge-col-label">What you've been doing</div>
+          <div class="bridge-col-title">Adjustments.</div>
+          <div class="bridge-col-body">Restore nervous-system flow. The signal gets through.</div>
+        </div>
+        <div class="bridge-plus">+</div>
+        <div class="bridge-col right">
+          <div class="bridge-col-label">What red light adds</div>
+          <div class="bridge-col-title">Cellular fuel.</div>
+          <div class="bridge-col-body">ATP, mitochondrial repair, oxygen delivery. The cells can act on the signal.</div>
+        </div>
+      </div>
+
+      <div class="bridge-payoff">
+        Together — your body recovers <span class="red">faster, deeper, longer.</span>
+      </div>
+    </div>
+
+    <div class="chrome-bottom">
+      <div class="meta">Brain-based chiropractic · Torque Release Technique</div>
+      <div class="meta slide-counter">11 / 14</div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       12 — BACKED BY SCIENCE
+       ======================================================== -->
+  <section class="slide" data-label="12 Science">
+    <div class="chrome-top">
+      <img class="lockup" src="assets/logo-lockup.png" alt="Radius" />
+      <div class="ticker"><span>The evidence base</span></div>
+    </div>
+
+    <div class="slide-pad">
+      <div class="eyebrow-rule" style="margin-bottom: 36px;">12 / Backed by science</div>
+      <h2 class="display h-1" style="margin-bottom: 16px; max-width: 18ch;">
+        Not a trend. A <span class="red">forty-year</span> evidence base.
+      </h2>
+      <p class="body-lg" style="max-width: 36ch; color: var(--fg-3);">
+        Photobiomodulation has been studied across pain, recovery, skin, fat loss, neurological, vascular, and metabolic outcomes.
+      </p>
+
+      <div class="s-science-grid">
+        <div class="sci-cell">
+          <div class="sci-num">200<span class="small">+</span></div>
+          <div class="sci-label">Peer-reviewed studies</div>
+        </div>
+        <div class="sci-cell">
+          <div class="sci-num">14</div>
+          <div class="sci-label">Therapeutic domains</div>
+        </div>
+        <div class="sci-cell">
+          <div class="sci-num">40<span class="small">+</span></div>
+          <div class="sci-label">Years of research</div>
+        </div>
+        <div class="sci-cell">
+          <div class="sci-num" style="font-size: 110px;">400<span class="small">–</span>900</div>
+          <div class="sci-label">Nanometer clinical range</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chrome-bottom">
+      <div class="meta">Sources at radiuschiropractic.com/red-light-therapy</div>
+      <div class="meta slide-counter">12 / 14</div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       13 — THE INTRO OFFER
+       ======================================================== -->
+  <section class="slide" data-label="13 Intro Offer">
+    <div class="chrome-top">
+      <img class="lockup" src="assets/logo-lockup.png" alt="Radius" />
+      <div class="ticker urgent"><span class="pulse"></span><span>Launch week ends Fri · May 1</span></div>
+    </div>
+
+    <div class="slide-pad s-offer">
+      <div>
+        <div class="offer-eyebrow">13 / Launch week intro</div>
+        <h2 class="display offer-headline">
+          One session.<br/>
+          <span class="red">Forty-nine</span> dollars.
+        </h2>
+
+        <div class="offer-price">
+          <div class="price-now">$49</div>
+          <div class="price-was">$200</div>
+        </div>
+
+        <div class="offer-includes">
+          <div class="offer-includes-label">Your intro includes</div>
+          <div class="offer-include-row"><span class="check"></span><span>Personalized consultation with Dr. Dan</span></div>
+          <div class="offer-include-row"><span class="check"></span><span>15-minute Pinnacle Bed session</span></div>
+          <div class="offer-include-row"><span class="check"></span><span>Your choice of mode — all five available</span></div>
+          <div class="offer-include-row"><span class="check"></span><span>Vibration plate therapy</span></div>
+        </div>
+      </div>
+
+      <div class="offer-guarantee">
+        <span class="label">Our guarantee · intro session</span>
+        <span class="red">2 inches</span> of fat loss.<br/>
+        Cumulative.<br/>
+        Measured.
+      </div>
+    </div>
+
+    <div class="chrome-bottom">
+      <div class="meta">Limited to first 50 members · launch week only</div>
+      <div class="meta slide-counter">13 / 14</div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       14 — HOW TO START (CTA + QR)
+       ======================================================== -->
+  <section class="slide" data-label="14 How to Start">
+    <div class="chrome-top">
+      <img class="lockup" src="assets/logo-lockup.png" alt="Radius" />
+      <div class="ticker urgent"><span class="pulse"></span><span>Book today</span></div>
+    </div>
+
+    <div class="slide-pad s-cta">
+      <div>
+        <div class="eyebrow-rule" style="margin-bottom: 36px;">14 / How to start</div>
+        <h2 class="display cta-headline">
+          Ask the front desk.
+        </h2>
+        <p class="cta-sub">
+          Or scan the code to book directly into Radius Chiropractic's calendar — same launch-week pricing, fewer steps.
+        </p>
+        <div class="cta-deadline">
+          <span class="pulse-dot" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px var(--accent);"></span>
+          Launch pricing ends Fri · May 1
+        </div>
+      </div>
+
+      <div>
+        <div class="qr-frame">
+          <!-- Inline QR placeholder. Replace src or regenerate for your real Calendly URL. -->
+          <svg id="qr-svg" viewBox="0 0 33 33" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg">
+            <rect width="33" height="33" fill="#fff"/>
+            <!-- Generated stylized QR-like pattern. Visual placeholder; replace with real QR before launch. -->
+          </svg>
+        </div>
+        <div class="qr-caption">
+          Scan to book · <span class="red">radiusrlt.com/start</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="chrome-bottom">
+      <div class="meta">Radius Chiropractic · 1011 Tunnel Rd · Asheville, NC · 4.9★ / 450+ reviews</div>
+      <div class="meta slide-counter">14 / 14</div>
+    </div>
+  </section>
+
+</deck-stage>
+
+<script>
+  // -------- Generate a deterministic QR-like placeholder pattern --------
+  // (This is NOT a scannable QR. It's a visual stand-in until you drop in
+  //  the real Calendly QR — replace the <svg id="qr-svg"> markup or set src
+  //  on an <img>.)
+  (function() {
+    const svg = document.getElementById('qr-svg');
+    if (!svg) return;
+    const size = 33;
+    const seed = 7919;
+    let rng = seed;
+    function rand() {
+      rng = (rng * 9301 + 49297) % 233280;
+      return rng / 233280;
+    }
+    const cells = [];
+    for (let y = 0; y < size; y++) {
+      for (let x = 0; x < size; x++) {
+        // skip corner finder regions
+        const inFinder = (
+          (x < 7 && y < 7) ||
+          (x >= size - 7 && y < 7) ||
+          (x < 7 && y >= size - 7)
+        );
+        if (inFinder) continue;
+        if (rand() < 0.5) {
+          cells.push(`<rect x="${x}" y="${y}" width="1" height="1" fill="#0A0A0B"/>`);
+        }
+      }
+    }
+    function finder(cx, cy) {
+      return `
+        <rect x="${cx}" y="${cy}" width="7" height="7" fill="#0A0A0B"/>
+        <rect x="${cx+1}" y="${cy+1}" width="5" height="5" fill="#fff"/>
+        <rect x="${cx+2}" y="${cy+2}" width="3" height="3" fill="#0A0A0B"/>
+      `;
+    }
+    svg.innerHTML = `
+      <rect width="33" height="33" fill="#fff"/>
+      ${cells.join('')}
+      ${finder(0,0)}
+      ${finder(size-7,0)}
+      ${finder(0,size-7)}
+    `;
+  })();
+
+  // -------- Auto-advance for waiting-room loop --------
+  // 7 seconds per slide as default (fits the 5–8s brief).
+  // Pauses on user interaction (mouse / key) for 30s, then resumes.
+  (function() {
+    const stage = document.querySelector('deck-stage');
+    if (!stage) return;
+    const SLIDE_MS = 7000;
+    const PAUSE_AFTER_INTERACT_MS = 30000;
+    let timer = null;
+    let pausedUntil = 0;
+
+    function totalSlides() {
+      return stage.querySelectorAll(':scope > section').length;
+    }
+    function currentIndex() {
+      // deck-stage exposes nothing public; we read from URL hash if present, else 0
+      const m = (location.hash.match(/#?slide=(\d+)/) || location.hash.match(/#(\d+)/));
+      if (m) return Math.max(0, parseInt(m[1], 10) - 1) | 0;
+      return 0;
+    }
+    function advance() {
+      if (Date.now() < pausedUntil) { schedule(); return; }
+      const total = totalSlides();
+      const next = (currentIndex() + 1) % total;
+      if (typeof stage.goTo === 'function') {
+        stage.goTo(next);
+      } else {
+        // fallback: dispatch arrow key
+        document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight' }));
+      }
+      schedule();
+    }
+    function schedule() {
+      clearTimeout(timer);
+      timer = setTimeout(advance, SLIDE_MS);
+    }
+    function pauseFromInteraction() {
+      pausedUntil = Date.now() + PAUSE_AFTER_INTERACT_MS;
+    }
+    ['keydown', 'click', 'touchstart', 'mousemove'].forEach(ev => {
+      window.addEventListener(ev, pauseFromInteraction, { passive: true });
+    });
+    // Allow toggling auto-advance with the 'A' key
+    let autoOn = true;
+    window.addEventListener('keydown', (e) => {
+      if (e.key.toLowerCase() === 'a') {
+        autoOn = !autoOn;
+        if (autoOn) schedule();
+        else clearTimeout(timer);
+      }
+    });
+
+    schedule();
+  })();
+</script>
+
+</body>
+</html>
